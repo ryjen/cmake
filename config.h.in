@@ -1,0 +1,27 @@
+/*
+ * Auto-generated header for CMake.  See config.h.in if you need to modify the original
+ */
+
+#ifndef CMAKE_CONFIG_H
+#define CMAKE_CONFIG_H
+
+#cmakedefine	DEBUG	1
+
+#define SYSTEM_NAME 		"@CMAKE_SYSTEM_NAME@"
+#define PACKAGE_NAME		"@PROJECT_NAME@"
+#define PACKAGE_VERSION		"@VERSION@"
+
+#cmakedefine	MYSQL_FOUND	1
+#cmakedefine	SQLITE3_FOUND	1
+
+/* support some autotools defines */
+#ifdef MYSQL_FOUND
+#define HAVE_LIBMYSQLCLIENT	1
+#endif
+
+#ifdef SQLITE3_FOUND
+#define HAVE_LIBSQLITE3		1
+#endif
+
+#endif
+
