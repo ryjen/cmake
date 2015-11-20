@@ -77,6 +77,8 @@ IF(NOT GCOV_PATH)
 	MESSAGE(FATAL_ERROR "gcov not found! Aborting...")
 ENDIF() # NOT GCOV_PATH
 
+SET(CODE_COVERAGE_FOUND ON CACHE STRING "Code coverage support found.")
+
 SET(CMAKE_CXX_FLAGS_COVERAGE
 	"-g -O0 --coverage -fprofile-arcs -ftest-coverage"
 	CACHE STRING "Flags used by the C++ compiler during coverage builds."
