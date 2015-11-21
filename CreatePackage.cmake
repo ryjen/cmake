@@ -21,4 +21,3 @@ function(create_package _description)
 
 endfunction()
 
-cd ..
