@@ -1,6 +1,10 @@
 
 if ("${CMAKE_PROJECT_NAME}" EQUAL "")
-	message(FATAL_ERROR "Must define a projectbefore using create_package")
+	message(FATAL_ERROR "Must define a project before using create_package")
+endif()
+
+if ("${PROJECT_VERSION}" EQUAL "")
+	message(FATAL_ERROR "Must define a project version before using create_package")
 endif()
 
 set(THIS_FILE_DIR ${CMAKE_CURRENT_LIST_DIR})

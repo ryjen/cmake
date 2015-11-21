@@ -6,7 +6,7 @@ libdir=${prefix}/lib
 Name: @CMAKE_PROJECT_NAME@
 Description: @PROJECT_DESCRIPTION@
 URL: http://github.com/deadcoda/@CMAKE_PROJECT_NAME@
-Version: ${PROJECT_VERSION}
+Version: @PROJECT_VERSION@
 Cflags: -I${includedir} -l@CMAKE_PROJECT_NAME@
 Libs: 
 Libs.private: 
