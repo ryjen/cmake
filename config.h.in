@@ -16,6 +16,8 @@
 #cmakedefine	MEMCHECK_FOUND		1
 #cmakedefine	CODE_COVERAGE_FOUND	1
 #cmakedefine	JSON_C_EXTENDED		1
+#cmakedefine	OPENSSL_FOUND		1
+#cmakedefine	CURL_FOUND		1
 
 /* support some autotools defines */
 #ifdef MYSQL_FOUND
@@ -24,6 +26,14 @@
 
 #ifdef SQLITE3_FOUND
 #define HAVE_LIBSQLITE3			1
+#endif
+
+#ifdef OPENSSL_FOUND
+#define HAVE_LIBSSL			1
+#endif
+
+#ifdef CURL_FOUND
+#define HAVE_LIBCURL			1
 #endif
 
 #endif
