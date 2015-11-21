@@ -15,6 +15,7 @@
 #cmakedefine	SQLITE3_FOUND		1
 #cmakedefine	MEMCHECK_FOUND		1
 #cmakedefine	CODE_COVERAGE_FOUND	1
+#cmakedefine	JSON_C_EXTENDED		1
 
 /* support some autotools defines */
 #ifdef MYSQL_FOUND
@@ -23,6 +24,10 @@
 
 #ifdef SQLITE3_FOUND
 #define HAVE_LIBSQLITE3			1
+#endif
+
+#ifdef JSON_C_FOUND
+#define HAVE_LIBJSONC			1
 #endif
 
 #endif
