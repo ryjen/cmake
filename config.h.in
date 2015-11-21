@@ -26,9 +26,5 @@
 #define HAVE_LIBSQLITE3			1
 #endif
 
-#ifdef JSON_C_FOUND
-#define HAVE_LIBJSONC			1
-#endif
-
 #endif
 
