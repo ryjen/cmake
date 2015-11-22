@@ -8,6 +8,7 @@ if (NOT DEFINED PROJECT_VERSION)
 endif()
 
 set(THIS_FILE_DIR ${CMAKE_CURRENT_LIST_DIR})
+set(THIS_OUTPUT_DIR "${PROJECT_BINARY_DIR}/gen")
 
 macro(create_package _description)
 
@@ -15,9 +16,9 @@ macro(create_package _description)
 
 	message(STATUS "Creating package config file ${PROJECT_NAME}.pc")
 
-	configure_file("${THIS_FILE_DIR}/pkg-config.pc.in" "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.pc" @ONLY)
+	configure_file("${THIS_FILE_DIR}/pkg-config.pc.in" "${THIS_OUTPUT_DIR}/${PROJECT_NAME}.pc" @ONLY)
 
-	install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+	install(FILES "${THIS_OUTPUT_DIR}/${PROJECT_NAME}.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
 endmacro()
 
