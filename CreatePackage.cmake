@@ -1,23 +1,23 @@
 
-if ("${PROJECT_NAME}" EQUAL "")
-	message(FATAL_ERROR "Must define a project before using create_package")
+if (NOT DEFINED PROJECT_NAME)
+	message(FATAL_ERROR "Must define a project name before using create_package")
 endif()
 
-if ("${PROJECT_VERSION}" EQUAL "")
+if (NOT DEFINED PROJECT_VERSION)
 	message(FATAL_ERROR "Must define a project version before using create_package")
 endif()
 
 set(THIS_FILE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
-function(create_package _description)
+macro(create_package _description)
 
-	set(PROJECT_DESCRIPTION _description)
+	set(PROJECT_DESCRIPTION ${_description})
 
 	message(STATUS "Creating package config file ${PROJECT_NAME}.pc")
 
-	configure_file("${THIS_FILE_DIR}/pkg-config.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/${PROJET_NAME}.pc" @ONLY)
+	configure_file("${THIS_FILE_DIR}/pkg-config.pc.in" "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.pc" @ONLY)
 
-	install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+	install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
-endfunction()
+endmacro()
 
