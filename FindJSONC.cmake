@@ -4,7 +4,7 @@
 
 find_package(PkgConfig)
 
-pkg_search_module(PC_JSON_C QUIET json-c>=0.10 json>=0.10)
+pkg_search_module(PC_JSON_C QUIET json-c>=0.10 json>=0.10 json0>=0.10)
 
 find_path(JSON_C_INCLUDE_DIR json.h
 	HINTS ${PC_JSON_C_INCLUDEDIR} ${PC_JSON_C_INCLUDE_DIRS} ${PC_JSON_INCLUDE_DIRS} ${PC_JSON_INCLUDEDIR} PATH_SUFFIXES json-c json)
