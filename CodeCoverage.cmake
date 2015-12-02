@@ -80,11 +80,11 @@ ENDIF() # NOT GCOV_PATH
 SET(CODE_COVERAGE_FOUND ON CACHE STRING "Code coverage support found.")
 
 SET(CMAKE_CXX_FLAGS_COVERAGE
-	"-g -O0 -fprofile-arcs -ftest-coverage"
+	"-g -O0 --coverage"
 	CACHE STRING "Flags used by the C++ compiler during coverage builds."
 	FORCE )
 SET(CMAKE_C_FLAGS_COVERAGE
-	"-g -O0 -fprofile-arcs -ftest-coverage"
+	"-g -O0 --coverage"
 	CACHE STRING "Flags used by the C compiler during coverage builds."
 	FORCE )
 SET(CMAKE_EXE_LINKER_FLAGS_COVERAGE
