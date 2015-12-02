@@ -79,12 +79,18 @@ ENDIF() # NOT GCOV_PATH
 
 SET(CODE_COVERAGE_FOUND ON CACHE STRING "Code coverage support found.")
 
+IF ( NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Coverage"))
+	MESSAGE( WARNING "Code coverage results with an optimized (non-Debug) build may be misleading" )
+ELSE()
+	SET(COVERAGE_DEBUG_FLAGS "-g")
+ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
+
 SET(CMAKE_CXX_FLAGS_COVERAGE
-	"-g -O0 --coverage"
+	"-O0 --coverage ${COVERAGE_DEBUG_FLAGS}"
 	CACHE STRING "Flags used by the C++ compiler during coverage builds."
 	FORCE )
 SET(CMAKE_C_FLAGS_COVERAGE
-	"-g -O0 --coverage"
+	"-O0 --coverage ${COVERAGE_DEBUG_FLAGS}"
 	CACHE STRING "Flags used by the C compiler during coverage builds."
 	FORCE )
 SET(CMAKE_EXE_LINKER_FLAGS_COVERAGE
@@ -100,11 +106,6 @@ MARK_AS_ADVANCED(
 	CMAKE_C_FLAGS_COVERAGE
 	CMAKE_EXE_LINKER_FLAGS_COVERAGE
 	CMAKE_SHARED_LINKER_FLAGS_COVERAGE )
-
-IF ( NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Coverage"))
-	MESSAGE( WARNING "Code coverage results with an optimized (non-Debug) build may be misleading" )
-ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
-
 
 # Param _targetname     The name of new the custom make target
 # Param _testrunner     The name of the target which runs the tests.
