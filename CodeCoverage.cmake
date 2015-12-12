@@ -81,8 +81,6 @@ SET(CODE_COVERAGE_FOUND ON CACHE STRING "Code coverage support found.")
 
 IF ( NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Coverage"))
 	MESSAGE( WARNING "Code coverage results with an optimized (non-Debug) build may be misleading" )
-ELSE()
-	SET(COVERAGE_DEBUG_FLAGS "-g")
 ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 
 SET(CMAKE_CXX_FLAGS_COVERAGE
