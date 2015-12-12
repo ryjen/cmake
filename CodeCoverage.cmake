@@ -80,11 +80,11 @@ ENDIF() # NOT GCOV_PATH
 SET(CODE_COVERAGE_FOUND ON CACHE STRING "Code coverage support found.")
 
 SET(CMAKE_CXX_FLAGS_COVERAGE
-	"-g -O0 -fprofile-arcs -ftest-coverage"
+	"-O0 --coverage"
 	CACHE STRING "Flags used by the C++ compiler during coverage builds."
 	FORCE )
 SET(CMAKE_C_FLAGS_COVERAGE
-	"-g -O0 -fprofile-arcs -ftest-coverage"
+	"-O0 --coverage"
 	CACHE STRING "Flags used by the C compiler during coverage builds."
 	FORCE )
 SET(CMAKE_EXE_LINKER_FLAGS_COVERAGE
@@ -136,6 +136,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 		# Capturing lcov counters and generating report
 		COMMAND ${LCOV_PATH} --directory . --capture --output-file ${_outputname}.info
 		COMMAND ${LCOV_PATH} --remove ${_outputname}.info 'tests/*' '/usr/*' --output-file ${_outputname}.info.cleaned
+		FILE REMOVE_RECURSE ${_outputname}
 		COMMAND ${GENHTML_PATH} -o ${_outputname} ${_outputname}.info.cleaned
 		COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info ${_outputname}.info.cleaned
 
