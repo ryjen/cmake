@@ -18,7 +18,7 @@ macro(create_package _description)
 
 	configure_file("${THIS_FILE_DIR}/pkg-config.pc.in" "${THIS_OUTPUT_DIR}/${PROJECT_NAME}.pc" @ONLY)
 
-	install(FILES "${THIS_OUTPUT_DIR}/${PROJECT_NAME}.pc" DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+	install(FILES "${THIS_OUTPUT_DIR}/${PROJECT_NAME}.pc" DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
 
 endmacro()
 
