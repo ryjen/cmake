@@ -68,7 +68,7 @@
 #
 
 # Check prereqs
-FIND_PROGRAM( GCOV_PATH gcov )
+FIND_PROGRAM( GCOV_PATH NAMES gcov-4.9 gcov-4.8 gcov )
 FIND_PROGRAM( LCOV_PATH lcov )
 FIND_PROGRAM( GENHTML_PATH genhtml )
 FIND_PROGRAM( GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/tests)
@@ -134,7 +134,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     # Capturing lcov counters and generating report
     COMMAND ${LCOV_PATH} --directory . --capture --output-file ${_outputname}.info
     COMMAND ${LCOV_PATH} --remove ${_outputname}.info 'tests/*' '/usr/*' --output-file ${_outputname}.info.cleaned
-    COMMAND ${CMAKE_COMMAND} -E rename ${_outputname}.info.cleaned ${_outputname}.info
+    COMMAND ${CMAKE_COMMAND} -E renamecd . ${_outputname}.info.cleaned ${_outputname}.info
   )
 
 	# Setup target
