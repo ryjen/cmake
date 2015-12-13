@@ -75,6 +75,8 @@ FIND_PROGRAM( GCOVR_PATH gcovr PATHS ${CMAKE_SOURCE_DIR}/tests)
 
 IF(NOT GCOV_PATH)
 	MESSAGE(FATAL_ERROR "gcov not found! Aborting...")
+ELSE()
+  MESSAGE(STATUS "Found ${GCOV_PATH}")
 ENDIF() # NOT GCOV_PATH
 
 SET(CODE_COVERAGE_FOUND ON CACHE STRING "Code coverage support found.")
@@ -117,10 +119,14 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 
 	IF(NOT LCOV_PATH)
 		MESSAGE(FATAL_ERROR "lcov not found! Aborting...")
+  ELSE()
+    MESSAGE(STATUS "Found ${LCOV_PATH}")
 	ENDIF() # NOT LCOV_PATH
 
 	IF(NOT GENHTML_PATH)
 		MESSAGE(FATAL_ERROR "genhtml not found! Aborting...")
+  ELSE()
+    MESSAGE(STATUS "Found ${GENHTML_PATH}")
 	ENDIF() # NOT GENHTML_PATH
 
   ADD_CUSTOM_TARGET(${_targetname}-info
