@@ -140,7 +140,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     # Capturing lcov counters and generating report
     COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory . --capture --output-file ${_outputname}.info
     COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --remove ${_outputname}.info 'tests/*' '/usr/*' --output-file ${_outputname}.info.cleaned
-    COMMAND ${CMAKE_COMMAND} -E renamecd . ${_outputname}.info.cleaned ${_outputname}.info
+    COMMAND ${CMAKE_COMMAND} -E rename ${_outputname}.info.cleaned ${_outputname}.info
   )
 
 	# Setup target
