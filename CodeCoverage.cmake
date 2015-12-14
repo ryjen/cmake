@@ -129,13 +129,16 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     MESSAGE(STATUS "Found ${GENHTML_PATH}")
 	ENDIF() # NOT GENHTML_PATH
 
-  ADD_CUSTOM_TARGET(${_targetname}-info
-
+  ADD_CUSTOM_TARGET(${_targetname}-clean
     # Cleanup lcov
     ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory . --zerocounters
+  )
 
-    # Run tests
-    COMMAND ${_testrunner} ${ARGV3}
+  ADD_CUSTOM_TARGET(${_targetname}-run
+    COMMAND ${_testrunner} $ARGV3
+  )
+
+  ADD_CUSTOM_TARGET(${_targetname}-info
 
     # Capturing lcov counters and generating report
     COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory . --capture --output-file ${_outputname}.info
@@ -146,7 +149,8 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 	# Setup target
 	ADD_CUSTOM_TARGET(${_targetname}
 
-		DEPENDS ${_targetname}-info
+		DEPENDS ${_targetname}-clean ${_targetname}-run ${_targetname}-info
+
 		COMMAND ${CMAKE_COMMAND} -E remove_directory ${_outputname}
 		COMMAND ${GENHTML_PATH} -o ${_outputname} ${_outputname}.info
 		COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info
