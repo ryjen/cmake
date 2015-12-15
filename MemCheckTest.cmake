@@ -16,3 +16,12 @@ function(add_memcheck_test _targetname _testrunner)
 
 endfunction()
 
+function(add_opt_memcheck_test _cond _targetname _testrunner)
+
+  if (NOT ${_cond} OR NOT MEMCHECK_COMMAND)
+    add_test(${_targetname} ${_testrunner})
+  else ()
+    add_test(${_targetname} ${MEMCHECK_COMMAND} --leak-check=full --error-exitcode=5 ${ARGV2} --quiet ${_testrunner})
+  endif()
+
+endfunction()
