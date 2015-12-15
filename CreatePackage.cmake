@@ -11,8 +11,10 @@ set(THIS_FILE_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(THIS_OUTPUT_DIR "${PROJECT_BINARY_DIR}/gen")
 
 macro(create_package _description)
-
-	set(PROJECT_DESCRIPTION ${_description})
+  
+  set(PKGCONF_NAME ${PROJECT_NAME})
+	set(PKGCONF_DESCRIPTION ${_description})
+  set(PKGCONF_VERSION ${PROJECT_VERSION})
 
 	message(STATUS "Creating package config file ${PROJECT_NAME}.pc")
 
@@ -22,3 +24,16 @@ macro(create_package _description)
 
 endmacro()
 
+macro(create_package_named _name _version _description)
+
+  set(PKGCONF_NAME ${_name})
+  set(PKGCONF_DESCRIPTION ${_description})
+  set(PKGCONF_VERSION ${_version})
+
+  message(STATUS "Creating package config file ${_name}.pc")
+
+  configure_file("${THIS_FILE_DIR}/pkg-config.pc.in" "${THIS_OUTPUT_DIR}/${_name}.pc" @ONLY)
+
+  install(FILES "${THIS_OUTPUT_DIR}/${_name}.pc" DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
+
+endmacro()

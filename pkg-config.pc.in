@@ -3,10 +3,10 @@ exec_prefix=${prefix}
 includedir=${prefix}/include
 libdir=${prefix}/lib
 
-Name: @PROJECT_NAME@
-Description: @PROJECT_DESCRIPTION@
-URL: http://github.com/deadcoda/@PROJECT_NAME@
-Version: @PROJECT_VERSION@
-Cflags: -I${includedir} -l@PROJECT_NAME@
-Libs: 
+Name: @PKGCONF_NAME@
+Description: @PKGCONF_DESCRIPTION@
+URL: http://github.com/deadcoda/@PPKGCONF_NAME@
+Version: @PKGCONF_VERSION@
+Cflags: -I${includedir}
+Libs: -L${libdir} -l@PKGCONF_NAME@
 Libs.private: 
