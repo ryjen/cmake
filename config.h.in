@@ -18,6 +18,7 @@
 #cmakedefine	JSON_C_EXTENDED		1
 #cmakedefine	OPENSSL_FOUND		1
 #cmakedefine	CURL_FOUND		1
+#cmakedefine 	PostgreSQL_FOUND	1
 
 /* support some autotools defines */
 #ifdef MYSQL_FOUND
@@ -30,6 +31,10 @@
 
 #ifdef OPENSSL_FOUND
 #define HAVE_LIBSSL			1
+#endif
+
+#ifdef PostgreSQL_FOUND
+#define HAVE_LIBPQ			1
 #endif
 
 #ifdef CURL_FOUND
