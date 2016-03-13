@@ -134,12 +134,11 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory . --zerocounters
   )
 
-  ADD_CUSTOM_TARGET(${_targetname}-run
+  ADD_CUSTOM_TARGET(${_targetname}-generate
     COMMAND ${_testrunner} $ARGV3
   )
 
   ADD_CUSTOM_TARGET(${_targetname}-info
-
     # Capturing lcov counters and generating report
     COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory . --capture --output-file ${_outputname}.info
     COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --remove ${_outputname}.info 'tests/*' '/usr/*' --output-file ${_outputname}.info.cleaned
@@ -149,7 +148,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 	# Setup target
 	ADD_CUSTOM_TARGET(${_targetname}
 
-		DEPENDS ${_targetname}-clean ${_targetname}-run ${_targetname}-info
+		DEPENDS ${_targetname}-clean ${_targetname}-generate ${_targetname}-info
 
 		COMMAND ${CMAKE_COMMAND} -E remove_directory ${_outputname}
 		COMMAND ${GENHTML_PATH} -o ${_outputname} ${_outputname}.info
