@@ -135,7 +135,13 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
   )
 
   ADD_CUSTOM_TARGET(${_targetname}-generate
-    COMMAND ${_testrunner} $ARGV3
+    COMMAND ${_testrunner} ${ARGN}
+  )
+
+  ADD_CUSTOM_TARGET(${_targetname}-generate-clean
+	DEPENDS ${_targetname}-clean
+	
+	COMMAND ${_testrunner} ${ARGN}
   )
 
   ADD_CUSTOM_TARGET(${_targetname}-info
@@ -145,10 +151,11 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     COMMAND ${CMAKE_COMMAND} -E rename ${_outputname}.info.cleaned ${_outputname}.info
   )
 
+	
 	# Setup target
 	ADD_CUSTOM_TARGET(${_targetname}
 
-		DEPENDS ${_targetname}-clean ${_targetname}-generate ${_targetname}-info
+		DEPENDS ${_targetname}-generate-clean ${_targetname}-info
 
 		COMMAND ${CMAKE_COMMAND} -E remove_directory ${_outputname}
 		COMMAND ${GENHTML_PATH} -o ${_outputname} ${_outputname}.info
