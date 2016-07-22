@@ -140,7 +140,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
 
   ADD_CUSTOM_TARGET(${_targetname}_generate_clean
 	DEPENDS ${_targetname}_clean
-	
+
 	COMMAND ${_testrunner} ${ARGN}
   )
 
@@ -151,7 +151,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     COMMAND ${CMAKE_COMMAND} -E rename ${_outputname}.info.cleaned ${_outputname}.info
   )
 
-	
+
 	# Setup target
 	ADD_CUSTOM_TARGET(${_targetname}
 
