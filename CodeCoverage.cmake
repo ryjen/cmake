@@ -72,6 +72,7 @@ FIND_PROGRAM( GCOV_PATH NAMES $ENV{GCOV} gcov )
 FIND_PROGRAM( LCOV_PATH lcov )
 FIND_PROGRAM( GENHTML_PATH genhtml )
 FIND_PROGRAM( GCOVR_PATH NAMES $ENV{GCOVR} gcovr PATHS ${CMAKE_SOURCE_DIR}/tests)
+FIND_PROGRAM( COVERALLS_PATH coveralls-lcov)
 
 IF(NOT GCOV_PATH)
 	MESSAGE(FATAL_ERROR "gcov not found! Aborting...")
@@ -129,6 +130,12 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     MESSAGE(STATUS "Found ${GENHTML_PATH}")
 	ENDIF() # NOT GENHTML_PATH
 
+	if (NOT COVERALLS_PATH)
+		MESSAGE(STATUS "Coveralls supported disabled")
+	else()
+		MESSAGE(STATUS "Coveralls support enabled")
+	endif()
+
   ADD_CUSTOM_TARGET(${_targetname}_clean
     # Cleanup lcov
     ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory . --zerocounters
@@ -151,6 +158,14 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _testrunner _outputname)
     COMMAND ${CMAKE_COMMAND} -E rename ${_outputname}.info.cleaned ${_outputname}.info
   )
 
+	if (COVERALLS_PATH)
+		ADD_CUSTOM_TARGET(${_targetname}_coveralls
+			DEPENDS ${_targetname}_generate_clean ${_targetname}_info
+			COMMAND ${COVERALLS_PATH} ${_outputname}.info
+			WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+			COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and uploading report."
+		)
+	endif()
 
 	# Setup target
 	ADD_CUSTOM_TARGET(${_targetname}
