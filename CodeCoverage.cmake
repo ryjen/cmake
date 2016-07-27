@@ -152,6 +152,8 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _outputname)
   )
 
   ADD_CUSTOM_TARGET(${_targetname}_info
+	DEPENDS ${_targetname}_generate_clean
+
     # Capturing lcov counters and generating report
     COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory . --capture --output-file ${_outputname}.info
     COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --remove ${_outputname}.info 'tests/*' '/usr/*' --output-file ${_outputname}.info.cleaned
@@ -160,7 +162,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _outputname)
 
 	if (COVERALLS_PATH)
 		ADD_CUSTOM_TARGET(${_targetname}_coveralls
-			DEPENDS ${_targetname}_generate_clean ${_targetname}_info
+			DEPENDS ${_targetname}_info
 			COMMAND ${COVERALLS_PATH} ${_outputname}.info
 			WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 			COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and uploading report."
@@ -170,7 +172,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _outputname)
 	# Setup target
 	ADD_CUSTOM_TARGET(${_targetname}
 
-		DEPENDS ${_targetname}_generate_clean ${_targetname}_info
+		DEPENDS ${_targetname}_info
 
 		COMMAND ${CMAKE_COMMAND} -E remove_directory ${_outputname}
 		COMMAND ${GENHTML_PATH} -o ${_outputname} ${_outputname}.info
