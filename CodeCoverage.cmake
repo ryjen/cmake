@@ -156,7 +156,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _outputname)
 
     # Capturing lcov counters and generating report
     COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory . --capture --output-file ${_outputname}.info
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --remove ${_outputname}.info 'tests/*' '/usr/*' --output-file ${_outputname}.info.cleaned
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --remove ${_outputname}.info 'tests/*' '/usr/include/*' '/usr/local/*' --output-file ${_outputname}.info.cleaned
     COMMAND ${CMAKE_COMMAND} -E rename ${_outputname}.info.cleaned ${_outputname}.info
   )
 
@@ -165,7 +165,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _outputname)
 			DEPENDS ${_targetname}_info
 			COMMAND ${COVERALLS_PATH} ${_outputname}.info
 			WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-			COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and uploading report."
+			COMMENT "Processing code coverage counters and uploading report."
 		)
 	endif()
 
@@ -179,7 +179,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _outputname)
 		COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info
 
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-		COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and generating report."
+		COMMENT "Processing code coverage counters and generating report."
 		)
 
 	# Show info where to find the report
