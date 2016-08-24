@@ -12,6 +12,7 @@
 #define PACKAGE_VERSION			"@VERSION@"
 
 #cmakedefine	MYSQL_FOUND		1
+#cmakedefine    MYSQL_VERSION   1
 #cmakedefine	SQLITE3_FOUND		1
 #cmakedefine	MEMCHECK_FOUND		1
 #cmakedefine	CODE_COVERAGE_FOUND	1
@@ -21,7 +22,7 @@
 #cmakedefine 	PostgreSQL_FOUND	1
 
 /* support some autotools defines */
-#ifdef MYSQL_FOUND
+#if defined(MYSQL_FOUND) || defined(MYSQL_VERSION)
 #define HAVE_LIBMYSQLCLIENT		1
 #endif
 
