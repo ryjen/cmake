@@ -138,7 +138,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _outputname)
 
   ADD_CUSTOM_TARGET(${_targetname}_clean
     # Cleanup lcov
-    ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory . --zerocounters
+    ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory ${CMAKE_BINARY_DIR} --zerocounters
   )
 
   ADD_CUSTOM_TARGET(${_targetname}_generate
@@ -155,7 +155,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _outputname)
 	DEPENDS ${_targetname}_generate_clean
 
     # Capturing lcov counters and generating report
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory . --capture --output-file ${_outputname}.info
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory ${CMAKE_BINARY_DIR} --no-external --capture --output-file ${_outputname}.info
     COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --remove ${_outputname}.info 'tests/*' '/usr/include/*' '/usr/local/*' --output-file ${_outputname}.info.cleaned
     COMMAND ${CMAKE_COMMAND} -E rename ${_outputname}.info.cleaned ${_outputname}.info
   )
