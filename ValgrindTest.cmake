@@ -2,49 +2,43 @@
 find_program(VALGRIND_COMMAND valgrind)
 
 if (VALGRIND_COMMAND)
-	SET(VALGRIND_COMMAND ON CACHE STRING "Memory checking support found.")
+	set(VALGRIND_COMMAND ON CACHE STRING "Memory checking support found.")
 endif()
 
-function(add_valgrind_test _targetname _testrunner)
+function(add_valgrind_test COND)
+	set(options "")
+	set(singleValueOpts TARGET_NAME EXECUTABLE)
+	set(multiValueOpts VALGRIND_ARGS EXECUTABLE_ARGS)
 
-	if (NOT VALGRIND_COMMAND)
-		MESSAGE( "Valgrind command not found!")
-		add_test(${_targetname} ${_testrunner} ${ARGN})
+	cmake_parse_arguments(add_valgrind_test "${options}" "${singleValueOpts}" "${multiValueOpts}" ${ARGN})
+
+	if (NOT EXECUTABLE)
+		set(EXECUTABLE "${PROJECT_BINARY_DIR}/tests/${TARGET_NAME}")
+	endif()
+
+	if (NOT ${COND} OR NOT VALGRIND_COMMAND)
+		add_test(${TARGET_NAME} ${EXECUTABLE} ${EXECUTABLE_ARGS})
 	else ()
-		add_test(${_targetname} ${VALGRIND_COMMAND} --leak-check=full --error-exitcode=5 ${ARGV2} --quiet ${_testrunner} ${ARG3})
+		add_test(${TARGET_NAME} ${VALGRIND_COMMAND} --leak-check=full --error-exitcode=5 ${VALGRIND_ARGS} --quiet ${EXECUTABLE} ${EXECUTABLE_ARGS})
 	endif()
 
 endfunction()
 
-function(add_valgrind_profile _targetname _testrunner)
+function(add_valgrind_profile COND)
+	set(options "")
+	set(singleValueOpts TARGET_NAME EXECUTABLE)
+	set(multiValueOpts VALGRIND_ARGS EXECUTABLE_ARGS)
 
-	if (NOT VALGRIND_COMMAND)
-		MESSAGE( "Valgrind command not found!")
-		add_test(${_targetname} ${_testrunner} ${ARGN})
-	else ()
-		add_test(${_targetname} ${VALGRIND_COMMAND} --tool=callgrind --error-exitcode=5 ${ARGV2} --quiet ${_testrunner} ${ARG3})
+	cmake_parse_arguments(add_valgrind_profile "${options}" "${singleValueOpts}" "${multiValueOpts}" ${ARGN})
+
+	if (NOT EXECUTABLE)
+		set(EXECUTABLE "${PROJECT_BINARY_DIR}/tests/${TARGET_NAME}")
 	endif()
 
-endfunction()
-
-
-function(add_opt_valgrind_test _cond _targetname _testrunner)
-
-  if (NOT ${_cond} OR NOT VALGRIND_COMMAND)
-    add_test(${_targetname} ${_testrunner} ${ARGN})
-  else ()
-    add_test(${_targetname} ${VALGRIND_COMMAND} --leak-check=full --error-exitcode=5 ${ARGV3} --quiet ${_testrunner} ${ARG4})
-  endif()
-
-endfunction()
-
-
-function(add_opt_valgrind_profile _cond _targetname _testrunner)
-
-  if (NOT ${_cond} OR NOT VALGRIND_COMMAND)
-    add_test(${_targetname} ${_testrunner} ${ARGN})
-  else ()
-    add_test(${_targetname} ${VALGRIND_COMMAND} --tool=calgrind --error-exitcode=5 ${ARGV3} --quiet ${_testrunner} ${ARG4})
-  endif()
+	if (NOT ${COND} OR NOT VALGRIND_COMMAND)
+		add_test(${TARGET_NAME} ${EXECUTABLE} ${EXECUTABLE_ARGS})
+	else ()
+		add_test(${TARGET_NAME} ${VALGRIND_COMMAND} --tool=calgrind --error-exitcode=5 ${VALGRIND_ARGS} --quiet ${EXECUTABLE} ${EXECUTABLE_ARGS})
+	endif()
 
 endfunction()

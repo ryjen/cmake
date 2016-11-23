@@ -80,7 +80,7 @@ ELSE()
   MESSAGE(STATUS "Found ${GCOV_PATH}")
 ENDIF() # NOT GCOV_PATH
 
-SET(CODE_COVERAGE_FOUND ON CACHE STRING "Code coverage support found.")
+SET(ENABLE_COVERAGE_FOUND ON CACHE STRING "Code coverage support found.")
 
 IF ( NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Coverage"))
 	MESSAGE( WARNING "Code coverage results with an optimized (non-Debug) build may be misleading" )
@@ -108,26 +108,29 @@ MARK_AS_ADVANCED(
 	CMAKE_EXE_LINKER_FLAGS_COVERAGE
 	CMAKE_SHARED_LINKER_FLAGS_COVERAGE )
 
-# Param _targetname     The name of new the custom make target
+# Param TARGET_NAME     The name of new the custom make target
 # Param _testrunner     The name of the target which runs the tests.
 #						MUST return ZERO always, even on errors.
 #						If not, no coverage report will be created!
-# Param _outputname     lcov output is generated as _outputname.info
-#                       HTML report is generated in _outputname/index.html
+# Param OUTPUT_NAME     lcov output is generated as OUTPUT_NAME.info
+#                       HTML report is generated in OUTPUT_NAME/index.html
 # Optional fourth parameter is passed as arguments to _testrunner
 #   Pass them in list form, e.g.: "-j;2" for -j 2
-FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _outputname)
+FUNCTION(SETUP_TARGET_FOR_COVERAGE)
+	set(options "")
+	set(singleValueArgs TARGET_NAME OUTPUT_NAME)
+	cmake_parse_arguments(SETUP_TARGET_FOR_COVERAGE "${options}" "${singleValueArgs}" "${multiValueArgs}" ${ARGN})
 
 	IF(NOT LCOV_PATH)
 		MESSAGE(FATAL_ERROR "lcov not found! Aborting...")
-  ELSE()
-    MESSAGE(STATUS "Found ${LCOV_PATH}")
+	ELSE()
+		MESSAGE(STATUS "Found ${LCOV_PATH}")
 	ENDIF() # NOT LCOV_PATH
 
 	IF(NOT GENHTML_PATH)
 		MESSAGE(FATAL_ERROR "genhtml not found! Aborting...")
-  ELSE()
-    MESSAGE(STATUS "Found ${GENHTML_PATH}")
+	ELSE()
+		MESSAGE(STATUS "Found ${GENHTML_PATH}")
 	ENDIF() # NOT GENHTML_PATH
 
 	if (NOT COVERALLS_PATH)
@@ -136,56 +139,56 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE _targetname _outputname)
 		MESSAGE(STATUS "Coveralls support enabled")
 	endif()
 
-  ADD_CUSTOM_TARGET(${_targetname}_clean
+  ADD_CUSTOM_TARGET(${TARGET_NAME}_clean
     # Cleanup lcov
     ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory . --zerocounters
   )
 
-  ADD_CUSTOM_TARGET(${_targetname}_generate
+  ADD_CUSTOM_TARGET(${TARGET_NAME}_generate
     COMMAND ${CMAKE_CTEST_COMMAND} --verbose ${ARGN}
   )
 
-  ADD_CUSTOM_TARGET(${_targetname}_generate_clean
-	DEPENDS ${_targetname}_clean
+  ADD_CUSTOM_TARGET(${TARGET_NAME}_generate_clean
+	DEPENDS ${TARGET_NAME}_clean
 
 	COMMAND ${CMAKE_CTEST_COMMAND} --verbose ${ARGN}
   )
 
-  ADD_CUSTOM_TARGET(${_targetname}_info
-	DEPENDS ${_targetname}_generate_clean
+  ADD_CUSTOM_TARGET(${TARGET_NAME}_info
+	DEPENDS ${TARGET_NAME}_generate_clean
 
     # Capturing lcov counters and generating report
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory . --capture --output-file ${_outputname}.info
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --remove ${_outputname}.info 'tests/*' '/usr/include/*' '/usr/local/*' --output-file ${_outputname}.info.cleaned
-    COMMAND ${CMAKE_COMMAND} -E rename ${_outputname}.info.cleaned ${_outputname}.info
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory . --capture --output-file ${OUTPUT_NAME}.info
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --remove ${OUTPUT_NAME}.info 'tests/*' '/usr/include/*' '/usr/local/*' --output-file ${OUTPUT_NAME}.info.cleaned
+    COMMAND ${CMAKE_COMMAND} -E rename ${OUTPUT_NAME}.info.cleaned ${OUTPUT_NAME}.info
   )
 
 	if (COVERALLS_PATH)
-		ADD_CUSTOM_TARGET(${_targetname}_coveralls
-			DEPENDS ${_targetname}_info
-			COMMAND ${COVERALLS_PATH} ${_outputname}.info
+		ADD_CUSTOM_TARGET(${TARGET_NAME}_coveralls
+			DEPENDS ${TARGET_NAME}_info
+			COMMAND ${COVERALLS_PATH} ${OUTPUT_NAME}.info
 			WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 			COMMENT "Processing code coverage counters and uploading report."
 		)
 	endif()
 
 	# Setup target
-	ADD_CUSTOM_TARGET(${_targetname}
+	ADD_CUSTOM_TARGET(${TARGET_NAME}
 
-		DEPENDS ${_targetname}_info
+		DEPENDS ${TARGET_NAME}_info
 
-		COMMAND ${CMAKE_COMMAND} -E remove_directory ${_outputname}
-		COMMAND ${GENHTML_PATH} -o ${_outputname} ${_outputname}.info
-		COMMAND ${CMAKE_COMMAND} -E remove ${_outputname}.info
+		COMMAND ${CMAKE_COMMAND} -E remove_directory ${OUTPUT_NAME}
+		COMMAND ${GENHTML_PATH} -o ${OUTPUT_NAME} ${OUTPUT_NAME}.info
+		COMMAND ${CMAKE_COMMAND} -E remove ${OUTPUT_NAME}.info
 
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 		COMMENT "Processing code coverage counters and generating report."
 		)
 
 	# Show info where to find the report
-	ADD_CUSTOM_COMMAND(TARGET ${_targetname} POST_BUILD
+	ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD
 		COMMAND ;
-		COMMENT "Open ./${_outputname}/index.html in your browser to view the coverage report."
+		COMMENT "Open ./${OUTPUT_NAME}/index.html in your browser to view the coverage report."
 		)
 
 ENDFUNCTION() # SETUP_TARGET_FOR_COVERAGE
