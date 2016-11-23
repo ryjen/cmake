@@ -1,4 +1,3 @@
-# Copyright (c) 2012 - 2015, Lars Bilke
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -108,18 +107,23 @@ MARK_AS_ADVANCED(
 	CMAKE_EXE_LINKER_FLAGS_COVERAGE
 	CMAKE_SHARED_LINKER_FLAGS_COVERAGE )
 
-# Param TARGET_NAME     The name of new the custom make target
-# Param _testrunner     The name of the target which runs the tests.
-#						MUST return ZERO always, even on errors.
-#						If not, no coverage report will be created!
-# Param OUTPUT_NAME     lcov output is generated as OUTPUT_NAME.info
-#                       HTML report is generated in OUTPUT_NAME/index.html
+# Param TARGET     The name of new the custom make target
+# Param OUTPUT     lcov output is generated as OUTPUT.info
+#                       HTML report is generated in OUTPUT/index.html
 # Optional fourth parameter is passed as arguments to _testrunner
 #   Pass them in list form, e.g.: "-j;2" for -j 2
 FUNCTION(SETUP_TARGET_FOR_COVERAGE)
 	set(options "")
-	set(singleValueArgs TARGET_NAME OUTPUT_NAME)
+	set(singleValueArgs TARGET OUTPUT)
 	cmake_parse_arguments(SETUP_TARGET_FOR_COVERAGE "${options}" "${singleValueArgs}" "${multiValueArgs}" ${ARGN})
+
+	if (NOT SETUP_TARGET_FOR_COVERAGE_TARGET) 
+		MESSAGE(FATAL_ERROR "No target specified to SETUP_TARGET_FOR_COVERAGE")
+	endif()
+
+	if (NOT SETUP_TARGET_FOR_COVERAGE_OUTPUT)
+		MESSAGE(FATAL_ERROR "No output specified to SETUP_TARGET_FOR_COVERAGE")
+	endif()
 
 	IF(NOT LCOV_PATH)
 		MESSAGE(FATAL_ERROR "lcov not found! Aborting...")
@@ -139,56 +143,56 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE)
 		MESSAGE(STATUS "Coveralls support enabled")
 	endif()
 
-  ADD_CUSTOM_TARGET(${TARGET_NAME}_clean
+  ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_clean
     # Cleanup lcov
     ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory ${CMAKE_BINARY_DIR} --zerocounters
   )
 
-  ADD_CUSTOM_TARGET(${TARGET_NAME}_generate
+  ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate
     COMMAND ${CMAKE_CTEST_COMMAND} --verbose ${ARGN}
   )
 
-  ADD_CUSTOM_TARGET(${TARGET_NAME}_generate_clean
-	DEPENDS ${TARGET_NAME}_clean
+  ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate_clean
+	DEPENDS ${TARGET}_clean
 
 	COMMAND ${CMAKE_CTEST_COMMAND} --verbose ${ARGN}
   )
 
-  ADD_CUSTOM_TARGET(${TARGET_NAME}_info
-	DEPENDS ${TARGET_NAME}_generate_clean
+  ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_info
+	DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate_clean
 
     # Capturing lcov counters and generating report
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory ${CMAKE_BINARY_DIR} --no-external --capture --output-file ${OUTPUT_NAME}.info
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --remove ${OUTPUT_NAME}.info 'tests/*' '/usr/include/*' '/usr/local/*' --output-file ${OUTPUT_NAME}.info.cleaned
-    COMMAND ${CMAKE_COMMAND} -E rename ${OUTPUT_NAME}.info.cleaned ${OUTPUT_NAME}.info
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory ${CMAKE_BINARY_DIR} --no-external --capture --output-file ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --remove ${OUTPUT}.info 'tests/*' '/usr/include/*' '/usr/local/*' --output-file ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info.cleaned
+    COMMAND ${CMAKE_COMMAND} -E rename ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info.cleaned ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
   )
 
 	if (COVERALLS_PATH)
-		ADD_CUSTOM_TARGET(${TARGET_NAME}_coveralls
-			DEPENDS ${TARGET_NAME}_info
-			COMMAND ${COVERALLS_PATH} ${OUTPUT_NAME}.info
+		ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_coveralls
+			DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_info
+			COMMAND ${COVERALLS_PATH} ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
 			WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 			COMMENT "Processing code coverage counters and uploading report."
 		)
 	endif()
 
 	# Setup target
-	ADD_CUSTOM_TARGET(${TARGET_NAME}
+	ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}
 
-		DEPENDS ${TARGET_NAME}_info
+		DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_info
 
-		COMMAND ${CMAKE_COMMAND} -E remove_directory ${OUTPUT_NAME}
-		COMMAND ${GENHTML_PATH} -o ${OUTPUT_NAME} ${OUTPUT_NAME}.info
-		COMMAND ${CMAKE_COMMAND} -E remove ${OUTPUT_NAME}.info
+		COMMAND ${CMAKE_COMMAND} -E remove_directory ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}
+		COMMAND ${GENHTML_PATH} -o ${SETUP_TARGET_FOR_COVERAGE_OUTPUT} ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
+		COMMAND ${CMAKE_COMMAND} -E remove ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
 
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 		COMMENT "Processing code coverage counters and generating report."
 		)
 
 	# Show info where to find the report
-	ADD_CUSTOM_COMMAND(TARGET ${TARGET_NAME} POST_BUILD
+	ADD_CUSTOM_COMMAND(TARGET ${SETUP_TARGET_FOR_COVERAGE_TARGET} POST_BUILD
 		COMMAND ;
-		COMMENT "Open ./${OUTPUT_NAME}/index.html in your browser to view the coverage report."
+		COMMENT "Open ./${OUTPUT}/index.html in your browser to view the coverage report."
 		)
 
 ENDFUNCTION() # SETUP_TARGET_FOR_COVERAGE
