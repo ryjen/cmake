@@ -15,7 +15,7 @@
 #cmakedefine    MYSQL_VERSION   1
 #cmakedefine	SQLITE3_FOUND		1
 #cmakedefine	MEMCHECK_FOUND		1
-#cmakedefine	CODE_COVERAGE_FOUND	1
+#cmakedefine	ENABLE_COVERAGE_FOUND	1
 #cmakedefine	JSON_C_EXTENDED		1
 #cmakedefine	OPENSSL_FOUND		1
 #cmakedefine	CURL_FOUND		1
