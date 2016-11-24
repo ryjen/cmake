@@ -163,7 +163,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE)
 
     # Capturing lcov counters and generating report
     COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory ${CMAKE_BINARY_DIR} --no-external --capture --output-file ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --remove ${OUTPUT}.info 'tests/*' '/usr/include/*' '/usr/local/*' --output-file ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info.cleaned
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --remove ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info 'tests/*' '/usr/include/*' '/usr/local/*' --output-file ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info.cleaned
     COMMAND ${CMAKE_COMMAND} -E rename ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info.cleaned ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
   )
 
@@ -192,7 +192,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE)
 	# Show info where to find the report
 	ADD_CUSTOM_COMMAND(TARGET ${SETUP_TARGET_FOR_COVERAGE_TARGET} POST_BUILD
 		COMMAND ;
-		COMMENT "Open ./${OUTPUT}/index.html in your browser to view the coverage report."
+		COMMENT "Open ./${SETUP_TARGET_FOR_COVERAGE_OUTPUT}/index.html in your browser to view the coverage report."
 		)
 
 ENDFUNCTION() # SETUP_TARGET_FOR_COVERAGE
