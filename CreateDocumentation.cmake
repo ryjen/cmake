@@ -34,7 +34,7 @@ function(CREATE_DOCUMENTATION)
 		add_custom_target(docs COMMAND ${HEADERDOC} -o ${PROJECT_SOURCE_DIR}/html ${PROJECT_SOURCE_DIR}/src/**.h
 																	 COMMAND ${GATHERDOC} ${PROJECT_BINARY_DIR}/html)
 	else()
-		message(FATAL_ERROR "No document generator found. Try installing doxygen or headerdoc.")
+		message(WARNING "No document generator found. Try installing doxygen or headerdoc.")
 	endif()
 
 endfunction()
