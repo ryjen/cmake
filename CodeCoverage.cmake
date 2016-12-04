@@ -162,8 +162,8 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE)
 	DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate_clean
 
     # Capturing lcov counters and generating report
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory ${CMAKE_BINARY_DIR} --no-external --capture --output-file ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --remove ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info 'tests/*' '/usr/include/*' '/usr/local/*' --output-file ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info.cleaned
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -q --directory ${CMAKE_BINARY_DIR} --no-external --capture --output-file ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -q --remove ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info 'tests/*' '/usr/include/*' '/usr/local/*' --output-file ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info.cleaned
     COMMAND ${CMAKE_COMMAND} -E rename ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info.cleaned ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
   )
 
