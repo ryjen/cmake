@@ -101,11 +101,14 @@ SET(CMAKE_SHARED_LINKER_FLAGS_COVERAGE
 	""
 	CACHE STRING "Flags used by the shared libraries linker during coverage builds."
 	FORCE )
+SET(COVERAGE_SOURCE_DIR "${PROJECT_BINARY_DIR}/src")
+set(COVERAGE_INFO_FILE "${PROJECT_BINARY_DIR}/gen/coverage.info")
 MARK_AS_ADVANCED(
 	CMAKE_CXX_FLAGS_COVERAGE
 	CMAKE_C_FLAGS_COVERAGE
 	CMAKE_EXE_LINKER_FLAGS_COVERAGE
-	CMAKE_SHARED_LINKER_FLAGS_COVERAGE )
+	CMAKE_SHARED_LINKER_FLAGS_COVERAGE 
+	COVERAGE_SOURCE_DIR)
 
 # Param TARGET     The name of new the custom make target
 # Param OUTPUT     lcov output is generated as OUTPUT.info
@@ -145,33 +148,33 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE)
 
   ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_clean
     # Cleanup lcov
-    ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory ${CMAKE_BINARY_DIR} --zerocounters
+    COMMENT "Cleaning coverage info"
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory ${COVERAGE_SOURCE_DIR} --zerocounters
   )
 
   ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate
+  	COMMENT "Executing tests for coverage"
     COMMAND ${CMAKE_CTEST_COMMAND} --verbose ${ARGN}
   )
 
   ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate_clean
 	DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_clean
-
+	COMMENT "Executing tests for coverage"
 	COMMAND ${CMAKE_CTEST_COMMAND} --verbose ${ARGN}
   )
 
   ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_info
 	DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate_clean
-
+	COMMENT "Gathering coverage info"
     # Capturing lcov counters and generating report
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -q --directory ${CMAKE_BINARY_DIR} --no-external --capture --output-file ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -q --remove ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info 'tests/*' '/usr/include/*' '/usr/local/*' --output-file ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info.cleaned
-    COMMAND ${CMAKE_COMMAND} -E rename ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info.cleaned ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -q --directory ${COVERAGE_SOURCE_DIR} --no-external --capture --output-file ${COVERAGE_INFO_FILE}
   )
 
 	if (COVERALLS_PATH)
 		ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_coveralls
 			DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_info
-			COMMAND ${COVERALLS_PATH} ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
-			WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+			COMMAND ${COVERALLS_PATH} ${COVERAGE_INFO_FILE}
+			WORKING_DIRECTORY ${COVERAGE_SOURCE_DIR}
 			COMMENT "Processing code coverage counters and uploading report."
 		)
 	endif()
@@ -182,10 +185,10 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE)
 		DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_info
 
 		COMMAND ${CMAKE_COMMAND} -E remove_directory ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}
-		COMMAND ${GENHTML_PATH} -o ${SETUP_TARGET_FOR_COVERAGE_OUTPUT} ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
-		COMMAND ${CMAKE_COMMAND} -E remove ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}.info
+		COMMAND ${GENHTML_PATH} -o ${SETUP_TARGET_FOR_COVERAGE_OUTPUT} ${COVERAGE_INFO_FILE}
+		COMMAND ${CMAKE_COMMAND} -E remove ${COVERAGE_INFO_FILE}
 
-		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+		WORKING_DIRECTORY ${COVERAGE_SOURCE_DIR}
 		COMMENT "Processing code coverage counters and generating report."
 		)
 
