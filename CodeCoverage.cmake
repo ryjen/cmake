@@ -167,7 +167,10 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE)
 	DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate_clean
 	COMMENT "Gathering coverage info"
     # Capturing lcov counters and generating report
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -q --directory ${COVERAGE_SOURCE_DIR} --no-external --capture --output-file ${COVERAGE_INFO_FILE}
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -q --directory ${COVERAGE_SOURCE_DIR} --capture --output-file ${COVERAGE_INFO_FILE}
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -q --remove ${COVERAGE_INFO_FILE} "/usr/include/*" --output-file ${COVERAGE_INFO_FILE}.cleaned
+    COMMAND ${CMAKE_COMMAND} -E copy ${COVERAGE_INFO_FILE}.cleaned ${COVERAGE_INFO_FILE}
+    COMMAND ${CMAKE_COMMAND} -E remove ${COVERAGE_INFO_FILE}.cleaned
   )
 
 	if (COVERALLS_PATH)
