@@ -101,7 +101,8 @@ SET(CMAKE_SHARED_LINKER_FLAGS_COVERAGE
 	""
 	CACHE STRING "Flags used by the shared libraries linker during coverage builds."
 	FORCE )
-SET(COVERAGE_SOURCE_DIR "${PROJECT_BINARY_DIR}/src")
+SET(COVERAGE_BINARY_DIR "${PROJECT_BINARY_DIR}/src")
+SET(COVERAGE_BASE_DIR "${PROJECT_SOURCE_DIR}")
 set(COVERAGE_INFO_FILE "${PROJECT_BINARY_DIR}/gen/coverage.info")
 MARK_AS_ADVANCED(
 	CMAKE_CXX_FLAGS_COVERAGE
@@ -149,7 +150,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE)
   ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_clean
     # Cleanup lcov
     COMMENT "Cleaning coverage info"
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory ${COVERAGE_SOURCE_DIR} --zerocounters
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory ${COVERAGE_BINARY_DIR} --zerocounters
   )
 
   ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate
@@ -167,10 +168,7 @@ FUNCTION(SETUP_TARGET_FOR_COVERAGE)
 	DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate_clean
 	COMMENT "Gathering coverage info"
     # Capturing lcov counters and generating report
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -q --directory ${COVERAGE_SOURCE_DIR} --capture --output-file ${COVERAGE_INFO_FILE}
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -q --remove ${COVERAGE_INFO_FILE} "/usr/include/*" --output-file ${COVERAGE_INFO_FILE}.cleaned
-    COMMAND ${CMAKE_COMMAND} -E copy ${COVERAGE_INFO_FILE}.cleaned ${COVERAGE_INFO_FILE}
-    COMMAND ${CMAKE_COMMAND} -E remove ${COVERAGE_INFO_FILE}.cleaned
+    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -q --directory ${COVERAGE_BINARY_DIR} --base-directory ${COVERAGE_BASE_DIR} --no-external --capture --output-file ${COVERAGE_INFO_FILE}
   )
 
 	if (COVERALLS_PATH)
