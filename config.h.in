@@ -12,7 +12,6 @@
 #define PACKAGE_VERSION			"@VERSION@"
 
 #cmakedefine	MYSQL_FOUND		1
-#cmakedefine    MYSQL_VERSION   1
 #cmakedefine	SQLITE3_FOUND		1
 #cmakedefine	MEMCHECK_FOUND		1
 #cmakedefine	ENABLE_COVERAGE_FOUND	1
