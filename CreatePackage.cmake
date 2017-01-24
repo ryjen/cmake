@@ -1,39 +1,39 @@
 
-if (NOT DEFINED PROJECT_NAME)
-	message(FATAL_ERROR "Must define a project name before using create_package")
-endif()
+function(create_package)
+  set(options)
+  set(singleValueOpts DESCRIPTION TARGET VERSION)
+  set(multiValueOpts VALGRIND_ARGS EXECUTABLE_ARGS)
 
-if (NOT DEFINED PROJECT_VERSION)
-	message(FATAL_ERROR "Must define a project version before using create_package")
-endif()
+  cmake_parse_arguments(CREATE_PACKAGE "${options}" "${singleValueOpts}" "${multiValueOpts}" ${ARGN})
 
-set(THIS_FILE_DIR ${CMAKE_CURRENT_LIST_DIR})
-set(THIS_OUTPUT_DIR "${PROJECT_BINARY_DIR}/gen")
+  if (NOT DEFINED CREATE_PACKAGE_TARGET)
+    if (NOT DEFINED PROJECT_NAME)
+      message(FATAL_ERROR "Must define a target name before using create_package")
+    endif()
+    set(CREATE_PACKAGE_TARGET ${PROJECT_NAME})
+  endif()
 
-macro(create_package _description)
+  if (NOT DEFINED CREATE_PACKAGE_VERSION)
+    if (NOT DEFINED PROJECT_VERSION)
+      message(FATAL_ERROR "Must define a project version before using create_package")
+    endif()
+    set(CREATE_PACKAGE_VERSION ${PROJECT_VERSION})
+  endif()
 
-  set(PKGCONF_NAME ${PROJECT_NAME})
-	set(PKGCONF_DESCRIPTION ${_description})
-    set(PKGCONF_VERSION ${PROJECT_VERSION})
+  if (NOT DEFINED CREATE_PACKAGE_DESCRIPTION)
+    message(FATAL_ERROR "Must define a description for the package")
+  endif()
 
-	message(STATUS "Creating package config file ${PROJECT_NAME}.pc")
+  set(PKGCONF_NAME ${CREATE_PACKAGE_TARGET})
+	set(PKGCONF_DESCRIPTION ${CREATE_PACKAGE_DESCRIPTION})
+  set(PKGCONF_VERSION ${CREATE_PACKAGE_VERSION})
 
-	configure_file("${THIS_FILE_DIR}/pkg-config.pc.in" "${THIS_OUTPUT_DIR}/${PROJECT_NAME}.pc" @ONLY)
+  set(CREATE_PACKAGE_OUTPUT_DIR "${PROJECT_BINARY_DIR}/gen")
 
-	install(FILES "${THIS_OUTPUT_DIR}/${PROJECT_NAME}.pc" DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
+	message(STATUS "Creating package config file ${CREATE_PACKAGE_TARGET}.pc")
 
-endmacro()
+	configure_file("${CMAKE_SOURCE_DIR}/cmake/pkg-config.pc.in" "${CREATE_PACKAGE_OUTPUT_DIR}/${CREATE_PACKAGE_TARGET}.pc" @ONLY)
 
-macro(create_package_named _name _version _description)
+	install(FILES "${CREATE_PACKAGE_OUTPUT_DIR}/${CREATE_PACKAGE_TARGET}.pc" DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
 
-  set(PKGCONF_NAME ${_name})
-  set(PKGCONF_DESCRIPTION ${_description})
-  set(PKGCONF_VERSION ${_version})
-
-  message(STATUS "Creating package config file ${_name}.pc")
-
-  configure_file("${THIS_FILE_DIR}/pkg-config.pc.in" "${THIS_OUTPUT_DIR}/${_name}.pc" @ONLY)
-
-  install(FILES "${THIS_OUTPUT_DIR}/${_name}.pc" DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
-
-endmacro()
+endfunction()
