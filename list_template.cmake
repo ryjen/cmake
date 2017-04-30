@@ -20,7 +20,7 @@ find_program(DOXYGEN doxygen)
 
 # create the package config install
 include(CreatePackage)
-create_package("@PROJECT_DESCRIPTION@")
+create_package(DESCRIPTION "@PROJECT_DESCRIPTION@")
 
 # add target for code coverage
 if(ENABLE_COVERAGE)
@@ -38,7 +38,7 @@ add_subdirectory(tests)
 # Setup testing
 enable_testing()
 
-add_valgrind_test(ENABLE_MEMCHECK TARGET ${TEST_PROJECT_NAME})
+add_valgrind_profile_test(MEMCHECK ${ENABLE_MEMCHECK} PROFILING ${ENABLE_PROFILING} TARGET ${TEST_PROJECT_NAME})
 
 if (DOXYGEN)
 	add_custom_target(html WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} COMMAND ${DOXYGEN} ${PROJECT_SOURCE_DIR}/Doxyfile)
