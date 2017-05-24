@@ -32,7 +32,7 @@ function(create_package)
 
 	message(STATUS "Creating package config file ${CREATE_PACKAGE_TARGET}.pc")
 
-	configure_file("${CMAKE_SOURCE_DIR}/cmake/pkg-config.pc.in" "${CREATE_PACKAGE_OUTPUT_DIR}/${CREATE_PACKAGE_TARGET}.pc" @ONLY)
+	configure_file("${PROJECT_SOURCE_DIR}/cmake/pkg-config.pc.in" "${CREATE_PACKAGE_OUTPUT_DIR}/${CREATE_PACKAGE_TARGET}.pc" @ONLY)
 
 	install(FILES "${CREATE_PACKAGE_OUTPUT_DIR}/${CREATE_PACKAGE_TARGET}.pc" DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
 
