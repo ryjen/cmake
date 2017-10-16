@@ -48,6 +48,6 @@ endif()
 mark_as_advanced(CMAKE_Go_COMPILER)
 
 # configure variables set in this file for fast reload later on
-configure_file(CMakeGoCompiler.cmake.in
+configure_file(${CMAKE_CURRENT_LIST_DIR}/CMakeGoCompiler.cmake.in
   ${CMAKE_PLATFORM_INFO_DIR}/CMakeGoCompiler.cmake @ONLY)
 set(CMAKE_Go_COMPILER_ENV_VAR "GO_COMPILER")
