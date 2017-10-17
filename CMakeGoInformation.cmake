@@ -33,7 +33,6 @@ endif()
 if(NOT CMAKE_Go_COMPILE_OBJECT)
   set(CMAKE_Go_COMPILE_OBJECT "go tool compile -l -N -o <OBJECT> <SOURCE> ")
 endif()
-<<<<<<< HEAD
 
 if(NOT CMAKE_Go_LINK_EXECUTABLE)
   set(CMAKE_Go_LINK_EXECUTABLE "go tool link -o <TARGET> <OBJECTS> ")
@@ -46,14 +45,3 @@ endif()
 if (NOT CMAKE_Go_CREATE_SHARED_LIBRARY)
   set(CMAKE_Go_CREATE_SHARED_LIBRARY "go tool link -o <TARGET> <OBJECTS> ")
 endif()
-=======
-if(NOT CMAKE_Go_LINK_EXECUTABLE)
-  set(CMAKE_Go_LINK_EXECUTABLE "go tool link -o <TARGET> <OBJECTS>  ")
-endif()
-if(NOT CMAKE_Go_CREATE_STATIC_LIBRARY)
-    set(CMAKE_Go_CREATE_STATIC_LIBRARY "go tool link -o <TARGET> <OBJECTS>  ")
-endif()
-if(NOT CMAKE_Go_CREATE_SHARED_LIBRARY)
-    set(CMAKE_Go_CREATE_SHARED_LIBRARY "go tool link -o <TARGET> <OBJECTS>  ")
-endif()
->>>>>>> 030e3aeab30bd5e2dc6f36f0f8a0e10c1f2c4146
