@@ -41,8 +41,6 @@ function(add_go_executable)
     ${CMAKE_GO_FLAGS} ${GO_EXECUTABLE_SOURCE_FILES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 
-  install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${GO_EXECUTABLE_NAME} DESTINATION bin)
-
 endfunction()
 
 function(add_go_library)
@@ -81,7 +79,4 @@ function(add_go_library)
     ${CMAKE_GO_FLAGS} ${GO_LIBRARY_SOURCE_FILES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 
-  if(DEFINED GO_LIBRARY_SHARED)
-    install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${LIB_NAME} DESTINATION bin)
-  endif()
 endfunction()
