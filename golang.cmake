@@ -59,15 +59,9 @@ function(add_go_library)
   endif()
 
   if (GO_LIBRARY_SHARED)
-    set(BUILD_MODE -buildmode=c-shared)
-    if(APPLE)
-      set(LIB_NAME "lib${GO_LIBRARY_NAME}.dylib")
-    else()
-      set(LIB_NAME "lib${GO_LIBRARY_NAME}.so")
-    endif()
+    set(BUILD_MODE -buildmode=shared)
   else()
-    set(BUILD_MODE -buildmode=c-archive)
-    set(LIB_NAME "lib${GO_LIBRARY_NAME}.a")
+    set(BUILD_MODE -buildmode=archive)
   endif()
 
   if (NOT DEFINED GO_LIBRARY_SOURCE_FILES)
@@ -75,7 +69,7 @@ function(add_go_library)
   endif()
 
   add_custom_target(${GO_LIBRARY_TARGET} COMMAND GOPATH=${GOPATH} ${CMAKE_Go_COMPILER} build ${BUILD_MODE}
-    -o "${CMAKE_CURRENT_BINARY_DIR}/${LIB_NAME}"
+    -o "${CMAKE_CURRENT_BINARY_DIR}/${GO_LIBRARY_NAME}"
     ${CMAKE_GO_FLAGS} ${GO_LIBRARY_SOURCE_FILES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 
