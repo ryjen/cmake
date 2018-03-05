@@ -1,7 +1,7 @@
 
 function(create_package)
   set(options)
-  set(singleValueOpts DESCRIPTION TARGET VERSION)
+  set(singleValueOpts DESCRIPTION TARGET URL VERSION)
   set(multiValueOpts VALGRIND_ARGS EXECUTABLE_ARGS)
 
   cmake_parse_arguments(CREATE_PACKAGE "${options}" "${singleValueOpts}" "${multiValueOpts}" ${ARGN})
@@ -20,12 +20,20 @@ function(create_package)
     set(CREATE_PACKAGE_VERSION ${PROJECT_VERSION})
   endif()
 
+  if (NOT DEFINED CREATE_PACKAGE_URL)
+    if (NOT DEFINED PROJECT_NAME)
+      message(FATAL_ERROR "Must define a target name before using create_package")
+    endif()
+    set(CREATE_PACKAGE_URL https://github.com/ryjen/${PROJECT_NAME})
+  endif()
+
   if (NOT DEFINED CREATE_PACKAGE_DESCRIPTION)
     message(FATAL_ERROR "Must define a description for the package")
   endif()
 
   set(PKGCONF_NAME ${CREATE_PACKAGE_TARGET})
-	set(PKGCONF_DESCRIPTION ${CREATE_PACKAGE_DESCRIPTION})
+  set(PKGCONF_URL ${CREATE_PACKAGE_URL})
+  set(PKGCONF_DESCRIPTION ${CREATE_PACKAGE_DESCRIPTION})
   set(PKGCONF_VERSION ${CREATE_PACKAGE_VERSION})
 
   set(CREATE_PACKAGE_OUTPUT_DIR "${PROJECT_BINARY_DIR}/gen")

@@ -5,7 +5,7 @@ libdir=${prefix}/lib
 
 Name: @PKGCONF_NAME@
 Description: @PKGCONF_DESCRIPTION@
-URL: http://github.com/deadcoda/@PPKGCONF_NAME@
+URL: @PKGCONF_URL@
 Version: @PKGCONF_VERSION@
 Cflags: -I${includedir}
 Libs: -L${libdir} -l@PKGCONF_NAME@
