@@ -36,6 +36,10 @@ function(add_go_executable)
     file(GLOB GO_EXECUTABLE_SOURCE_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.go")
   endif()
 
+  if (NOT CMAKE_GO_FLAGS)
+      set(CMAKE_GO_FLAGS "-ldflags=\"-s\"")
+  endif()
+
   add_custom_target(${GO_EXECUTABLE_TARGET}  COMMAND GOPATH=${GOPATH} ${CMAKE_Go_COMPILER} build
     -o "${CMAKE_CURRENT_BINARY_DIR}/${GO_EXECUTABLE_NAME}"
     ${CMAKE_GO_FLAGS} ${GO_EXECUTABLE_SOURCE_FILES}
@@ -67,6 +71,10 @@ function(add_go_library)
 
   if (NOT DEFINED GO_LIBRARY_SOURCE_FILES)
     file(GLOB GO_LIBRARY_SOURCE_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "*.go")
+  endif()
+
+  if (NOT CMAKE_GO_FLAGS)
+      set(CMAKE_GO_FLAGS "-ldflags=\"-s\"")
   endif()
 
   add_custom_target(${GO_LIBRARY_TARGET} COMMAND GOPATH=${GOPATH} ${CMAKE_Go_COMPILER} build ${BUILD_MODE}
