@@ -17,7 +17,7 @@
 
 if(NOT CMAKE_Go_COMPILER)
 
-  if ($ENV{GOPATH} STREQUAL "")
+  if (NOT $ENV{GOPATH} OR $ENV{GOPATH} STREQUAL "")
     message(SEND_ERROR "Please set GOPATH before running make")
   endif()
 
