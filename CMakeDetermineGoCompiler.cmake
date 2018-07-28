@@ -17,10 +17,6 @@
 
 if(NOT CMAKE_Go_COMPILER)
 
-  if (NOT $ENV{GOPATH} OR $ENV{GOPATH} STREQUAL "")
-    message(SEND_ERROR "Please set GOPATH before running make")
-  endif()
-
   # prefer the environment variable CC
   if(NOT $ENV{GO_COMPILER} STREQUAL "")
     get_filename_component(CMAKE_Go_COMPILER_INIT $ENV{GO_COMPILER} PROGRAM PROGRAM_ARGS CMAKE_Go_FLAGS_ENV_INIT)
