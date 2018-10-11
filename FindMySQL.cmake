@@ -5,44 +5,34 @@
 #  MYSQL_LIBRARIES    - List of libraries when using MySQL.
 #  MYSQL_FOUND        - True if MySQL found.
 
-if (NOT DEFINED MSVC)
-  find_path(MYSQL_INCLUDE_DIR
-    NAMES mysql.h
-    PATH_SUFFIXES mysql
-    )
+find_program(MYSQL_CONFIG mysql_config)
 
-  find_library(MYSQL_LIBRARY
-    NAMES mysqlclient mysqlclient_r
-    PATH_SUFFIXES mysql
-    )
-else()
-  find_path(MYSQL_INCLUDE_DIR
-    NAMES mysql.h
-    PATH_SUFFIXES include
-    PATHS "$ENV{SystemDrive}/Program Files/mariadb-connector-c/include/mariadb"
-          "$ENV{SystemDrive}/Program Files (x86)/mariadb-connector-c/include/mariadb"
-    )
-  MESSAGE("INCLUDE_DIR: ${MYSQL_INCLUDE_DIR}")
-
-  find_library(MYSQL_LIBRARY
-    NAMES libmariadb
-    PATH_SUFFIXES lib
-    PATHS "$ENV{SystemDrive}/Program Files/mariadb-connector-c/lib/mariadb"
-          "$ENV{SystemDrive}/Program Files (x86)/mariadb-connector-c/lib/mariadb"
-    )
-  MESSAGE("LIB: ${MYSQL_LIBRARY}")
+if (NOT MYSQL_CONFIG)
+  message(FATAL_ERROR "Could not find mysql_config program for MySql package")
 endif()
+
+execute_process(COMMAND ${MYSQL_CONFIG} --variable=pkgincludedir OUTPUT_VARIABLE MYSQL_INCLUDE_DIR)
+execute_process(COMMAND ${MYSQL_CONFIG} --variable=pkglibdir OUTPUT_VARIABLE MYSQL_LIB_DIR)
+
+find_library(LIBMYSQLCLIENT_FOUND mysqlclient HINTS ${MYSQL_LIB_DIR})
+
+if (NOT LIBMYSQLCLIENT_FOUND) 
+  message(FATAL_ERROR "libmysql not found")
+endif()
+
+set(MYSQL_LIBRARIES "-lmysqlclient")
+
+string(REGEX REPLACE " ?\n$" "" MYSQL_INCLUDE_DIR "${MYSQL_INCLUDE_DIR}")
+string(REGEX REPLACE " ?\n$" "" MYSQL_LIB_DIR "${MYSQL_LIB_DIR}")
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(MYSQL
   FOUND_VAR MYSQL_FOUND
-  REQUIRED_VARS MYSQL_LIBRARY MYSQL_INCLUDE_DIR
-  )
+  REQUIRED_VARS MYSQL_LIBRARIES MYSQL_INCLUDE_DIR
+)
 
 mark_as_advanced(
-  MYSQL_LIBRARY
+  MYSQL_LIBRARIES
   MYSQL_INCLUDE_DIR
-  )
+)
 
-set(MYSQL_INCLUDE_DIRS ${MYSQL_INCLUDE_DIR})
-set(MYSQL_LIBRARIES ${MYSQL_LIBRARY})
