@@ -1,13 +1,14 @@
 
 function(config_packages_deb)
   set(options)
-  set(singleValueOpts DEPENDS SECTION)
+  set(singleValueOpts DEPENDS SECTION RECOMMENDS)
   set(multiValueOpts)
 
   cmake_parse_arguments(CONFIG_PACKAGES "${options}" "${singleValueOpts}" "${multiValueOpts}" ${ARGN})
 
   set(CPACK_DEBIAN_PACKAGE_DEPENDS ${CONFIG_PACKAGES_DEPENDS})
   set(CPACK_DEBIAN_PACKAGE_SECTION ${CONFIG_PACKAGES_SECTION})
+  set(CPACK_DEBIAN_PACKAGE_RECOMMENDS ${CONFIG_PACKAGES_RECOMMENDS})
 
 endfunction()
 
@@ -30,8 +31,8 @@ function(create_distributions)
 
   cmake_parse_arguments(GEN_PACKAGE "${options}" "${singleValueOpts}" "${multiValueOpts}" ${ARGN})
 
-  if (NOT GEN_PACKAGE_TYPE) 
-    set(GEN_PACKAGE_TYPE "DEB;RPM;MACOSX_BUNDLE;TGZ;ZIP")
+  if (NOT GEN_PACKAGE_TYPES) 
+    set(GEN_PACKAGE_TYPES "DEB;RPM;TGZ;ZIP")
   endif()
 
   if (NOT GEN_PACKAGE_MAINTAINER)
@@ -47,7 +48,7 @@ function(create_distributions)
   endif()
 
   if (NOT GEN_PACKAGE_INSTALL_PREFIX)
-    set(GEN_PACKAGE_INSTALL_PREFIX "/usr/local")
+    set(GEN_PACKAGE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
   endif()
 
   if (NOT GEN_PACKAGE_LICENSE) 
@@ -59,7 +60,7 @@ function(create_distributions)
   endif()
 
   # Tell CPack to generate a .deb package
-  set(CPACK_GENERATOR GEN_PACKAGE_TYPE)
+  set(CPACK_GENERATOR ${GEN_PACKAGE_TYPES})
 
   # Set a Package Maintainer.
   # This is required
