@@ -1,5 +1,5 @@
 
-function(create_package)
+function(create_package_config)
   set(options)
   set(singleValueOpts DESCRIPTION TARGET URL VERSION)
   set(multiValueOpts VALGRIND_ARGS EXECUTABLE_ARGS)
