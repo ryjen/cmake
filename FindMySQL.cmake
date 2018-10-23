@@ -8,7 +8,8 @@
 find_program(MYSQL_CONFIG mysql_config)
 
 if (NOT MYSQL_CONFIG)
-  message(FATAL_ERROR "Could not find mysql_config program for MySql package")
+  message(STATUS "Could not find mysql_config program for MySql package")
+  return()
 endif()
 
 execute_process(COMMAND ${MYSQL_CONFIG} --variable=pkgincludedir OUTPUT_VARIABLE MYSQL_INCLUDE_DIR)

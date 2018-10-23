@@ -9,7 +9,8 @@
 find_program(PG_CONFIG pg_config)
 
 if (NOT PG_CONFIG)
-  message(FATAL_ERROR "Unable to find pg_config program for Postgres")
+  message(STATUS "Unable to find pg_config program for Postgres")
+  return()
 endif()
 
 execute_process(COMMAND ${PG_CONFIG} --includedir OUTPUT_VARIABLE POSTGRES_INCLUDE_DIR)
