@@ -12,8 +12,31 @@ if (NOT MYSQL_CONFIG)
   return()
 endif()
 
-execute_process(COMMAND ${MYSQL_CONFIG} --variable=pkgincludedir OUTPUT_VARIABLE MYSQL_INCLUDE_DIR)
-execute_process(COMMAND ${MYSQL_CONFIG} --variable=pkglibdir OUTPUT_VARIABLE MYSQL_LIB_DIR)
+execute_process(COMMAND ${MYSQL_CONFIG} --variable=pkgincludedir OUTPUT_VARIABLE MYSQL_INCLUDE_DIR OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_VARIABLE MYSQL_ERROR)
+
+if (NOT MYSQL_ERROR)
+
+  execute_process(COMMAND ${MYSQL_CONFIG} --variable=pkglibdir OUTPUT_VARIABLE MYSQL_LIB_DIR OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_VARIABLE MYSQL_ERROR)
+
+else()
+
+  unset(MYSQL_INCLUDE_DIR)
+
+  find_path(MYSQL_INCLUDE_DIR NAMES "mysql.h" PATH_SUFFIXES "mysql")
+
+  if (NOT MYSQL_INCLUDE_DIR) 
+    message(FATAL_ERROR "unable to find mysql include dir")
+  endif()
+
+  unset(MYSQL_LIB_DIR)
+
+  find_path(MYSQL_LIB_DIR NAMES "libmysqlclient.so" PATH_SUFFIXES "mysql" PATHS "/usr/lib" "/usr/local/lib")
+
+  if (NOT MYSQL_LIB_DIR)
+    message(FATAL_ERROR "unable to find mysql lib dir")
+  endif()
+endif()
+
 
 find_library(LIBMYSQLCLIENT_FOUND mysqlclient HINTS ${MYSQL_LIB_DIR})
 
@@ -22,9 +45,6 @@ if (NOT LIBMYSQLCLIENT_FOUND)
 endif()
 
 set(MYSQL_LIBRARIES "-lmysqlclient")
-
-string(REGEX REPLACE " ?\n$" "" MYSQL_INCLUDE_DIR "${MYSQL_INCLUDE_DIR}")
-string(REGEX REPLACE " ?\n$" "" MYSQL_LIB_DIR "${MYSQL_LIB_DIR}")
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(MYSQL
