@@ -18,30 +18,30 @@
 # But, it should still be after the platform file so changes can
 # be made to those values.
 
-if(CMAKE_USER_MAKE_RULES_OVERRIDE)
-  # Save the full path of the file so try_compile can use it.
-  include(${CMAKE_USER_MAKE_RULES_OVERRIDE} RESULT_VARIABLE _override)
-  set(CMAKE_USER_MAKE_RULES_OVERRIDE "${_override}")
-endif()
+if (CMAKE_USER_MAKE_RULES_OVERRIDE)
+    # Save the full path of the file so try_compile can use it.
+    include(${CMAKE_USER_MAKE_RULES_OVERRIDE} RESULT_VARIABLE _override)
+    set(CMAKE_USER_MAKE_RULES_OVERRIDE "${_override}")
+endif ()
 
-if(CMAKE_USER_MAKE_RULES_OVERRIDE_Go)
-  # Save the full path of the file so try_compile can use it.
-   include(${CMAKE_USER_MAKE_RULES_OVERRIDE_Go} RESULT_VARIABLE _override)
-   set(CMAKE_USER_MAKE_RULES_OVERRIDE_Go "${_override}")
-endif()
+if (CMAKE_USER_MAKE_RULES_OVERRIDE_Go)
+    # Save the full path of the file so try_compile can use it.
+    include(${CMAKE_USER_MAKE_RULES_OVERRIDE_Go} RESULT_VARIABLE _override)
+    set(CMAKE_USER_MAKE_RULES_OVERRIDE_Go "${_override}")
+endif ()
 
-if(NOT CMAKE_Go_COMPILE_OBJECT)
-  set(CMAKE_Go_COMPILE_OBJECT "go tool compile -l -N -o <OBJECT> <SOURCE> ")
-endif()
+if (NOT CMAKE_Go_COMPILE_OBJECT)
+    set(CMAKE_Go_COMPILE_OBJECT "go tool compile -l -N -o <OBJECT> <SOURCE> ")
+endif ()
 
-if(NOT CMAKE_Go_LINK_EXECUTABLE)
-  set(CMAKE_Go_LINK_EXECUTABLE "go tool link -o <TARGET> <OBJECTS> ")
-endif()
+if (NOT CMAKE_Go_LINK_EXECUTABLE)
+    set(CMAKE_Go_LINK_EXECUTABLE "go tool link -o <TARGET> <OBJECTS> ")
+endif ()
 
 if (NOT CMAKE_Go_CREATE_STATIC_LIBRARY)
-  set(CMAKE_Go_CREATE_STATIC_LIBRARY "go tool link -o <TARGET> <OBJECTS> ")
-endif()
+    set(CMAKE_Go_CREATE_STATIC_LIBRARY "go tool link -o <TARGET> <OBJECTS> ")
+endif ()
 
 if (NOT CMAKE_Go_CREATE_SHARED_LIBRARY)
-  set(CMAKE_Go_CREATE_SHARED_LIBRARY "go tool link -o <TARGET> <OBJECTS> ")
-endif()
+    set(CMAKE_Go_CREATE_SHARED_LIBRARY "go tool link -o <TARGET> <OBJECTS> ")
+endif ()

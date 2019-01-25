@@ -67,49 +67,49 @@
 #
 
 # Check prereqs
-FIND_PROGRAM( GCOV_PATH NAMES $ENV{GCOV} gcov )
-FIND_PROGRAM( LCOV_PATH lcov )
-FIND_PROGRAM( GENHTML_PATH genhtml )
-FIND_PROGRAM( GCOVR_PATH NAMES $ENV{GCOVR} gcovr PATHS ${CMAKE_SOURCE_DIR}/tests)
-FIND_PROGRAM( COVERALLS_PATH coveralls-lcov)
+FIND_PROGRAM(GCOV_PATH NAMES $ENV{GCOV} gcov)
+FIND_PROGRAM(LCOV_PATH lcov)
+FIND_PROGRAM(GENHTML_PATH genhtml)
+FIND_PROGRAM(GCOVR_PATH NAMES $ENV{GCOVR} gcovr PATHS ${CMAKE_SOURCE_DIR}/tests)
+FIND_PROGRAM(COVERALLS_PATH coveralls-lcov)
 
-IF(NOT GCOV_PATH)
-	MESSAGE(FATAL_ERROR "gcov not found! Aborting...")
-ELSE()
-  MESSAGE(STATUS "Found ${GCOV_PATH}")
-ENDIF() # NOT GCOV_PATH
+IF (NOT GCOV_PATH)
+    MESSAGE(FATAL_ERROR "gcov not found! Aborting...")
+ELSE ()
+    MESSAGE(STATUS "Found ${GCOV_PATH}")
+ENDIF () # NOT GCOV_PATH
 
 SET(ENABLE_COVERAGE_FOUND ON CACHE STRING "Code coverage support found.")
 
-IF ( NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Coverage"))
-	MESSAGE( WARNING "Code coverage results with an optimized (non-Debug) build may be misleading" )
-ENDIF() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
+IF (NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Coverage"))
+    MESSAGE(WARNING "Code coverage results with an optimized (non-Debug) build may be misleading")
+ENDIF () # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 
 SET(CMAKE_CXX_FLAGS_COVERAGE
-	"-O0 --coverage ${COVERAGE_DEBUG_FLAGS}"
-	CACHE STRING "Flags used by the C++ compiler during coverage builds."
-	FORCE )
+        "-O0 --coverage ${COVERAGE_DEBUG_FLAGS}"
+        CACHE STRING "Flags used by the C++ compiler during coverage builds."
+        FORCE)
 SET(CMAKE_C_FLAGS_COVERAGE
-	"-O0 --coverage ${COVERAGE_DEBUG_FLAGS}"
-	CACHE STRING "Flags used by the C compiler during coverage builds."
-	FORCE )
+        "-O0 --coverage ${COVERAGE_DEBUG_FLAGS}"
+        CACHE STRING "Flags used by the C compiler during coverage builds."
+        FORCE)
 SET(CMAKE_EXE_LINKER_FLAGS_COVERAGE
-	""
-	CACHE STRING "Flags used for linking binaries during coverage builds."
-	FORCE )
+        ""
+        CACHE STRING "Flags used for linking binaries during coverage builds."
+        FORCE)
 SET(CMAKE_SHARED_LINKER_FLAGS_COVERAGE
-	""
-	CACHE STRING "Flags used by the shared libraries linker during coverage builds."
-	FORCE )
+        ""
+        CACHE STRING "Flags used by the shared libraries linker during coverage builds."
+        FORCE)
 SET(COVERAGE_BINARY_DIR "${PROJECT_BINARY_DIR}/src")
 SET(COVERAGE_BASE_DIR "${PROJECT_SOURCE_DIR}")
 set(COVERAGE_INFO_FILE "${PROJECT_BINARY_DIR}/gen/coverage.info")
 MARK_AS_ADVANCED(
-	CMAKE_CXX_FLAGS_COVERAGE
-	CMAKE_C_FLAGS_COVERAGE
-	CMAKE_EXE_LINKER_FLAGS_COVERAGE
-	CMAKE_SHARED_LINKER_FLAGS_COVERAGE 
-	COVERAGE_SOURCE_DIR)
+        CMAKE_CXX_FLAGS_COVERAGE
+        CMAKE_C_FLAGS_COVERAGE
+        CMAKE_EXE_LINKER_FLAGS_COVERAGE
+        CMAKE_SHARED_LINKER_FLAGS_COVERAGE
+        COVERAGE_SOURCE_DIR)
 
 # Param TARGET     The name of new the custom make target
 # Param OUTPUT     lcov output is generated as OUTPUT.info
@@ -117,86 +117,86 @@ MARK_AS_ADVANCED(
 # Optional fourth parameter is passed as arguments to _testrunner
 #   Pass them in list form, e.g.: "-j;2" for -j 2
 FUNCTION(SETUP_TARGET_FOR_COVERAGE)
-	set(options "")
-	set(singleValueArgs TARGET OUTPUT)
-	cmake_parse_arguments(SETUP_TARGET_FOR_COVERAGE "${options}" "${singleValueArgs}" "${multiValueArgs}" ${ARGN})
+    set(options "")
+    set(singleValueArgs TARGET OUTPUT)
+    cmake_parse_arguments(SETUP_TARGET_FOR_COVERAGE "${options}" "${singleValueArgs}" "${multiValueArgs}" ${ARGN})
 
-	if (NOT SETUP_TARGET_FOR_COVERAGE_TARGET) 
-		MESSAGE(FATAL_ERROR "No target specified to SETUP_TARGET_FOR_COVERAGE")
-	endif()
+    if (NOT SETUP_TARGET_FOR_COVERAGE_TARGET)
+        MESSAGE(FATAL_ERROR "No target specified to SETUP_TARGET_FOR_COVERAGE")
+    endif ()
 
-	if (NOT SETUP_TARGET_FOR_COVERAGE_OUTPUT)
-		MESSAGE(FATAL_ERROR "No output specified to SETUP_TARGET_FOR_COVERAGE")
-	endif()
+    if (NOT SETUP_TARGET_FOR_COVERAGE_OUTPUT)
+        MESSAGE(FATAL_ERROR "No output specified to SETUP_TARGET_FOR_COVERAGE")
+    endif ()
 
-	IF(NOT LCOV_PATH)
-		MESSAGE(FATAL_ERROR "lcov not found! Aborting...")
-	ELSE()
-		MESSAGE(STATUS "Found ${LCOV_PATH}")
-	ENDIF() # NOT LCOV_PATH
+    IF (NOT LCOV_PATH)
+        MESSAGE(FATAL_ERROR "lcov not found! Aborting...")
+    ELSE ()
+        MESSAGE(STATUS "Found ${LCOV_PATH}")
+    ENDIF () # NOT LCOV_PATH
 
-	IF(NOT GENHTML_PATH)
-		MESSAGE(FATAL_ERROR "genhtml not found! Aborting...")
-	ELSE()
-		MESSAGE(STATUS "Found ${GENHTML_PATH}")
-	ENDIF() # NOT GENHTML_PATH
+    IF (NOT GENHTML_PATH)
+        MESSAGE(FATAL_ERROR "genhtml not found! Aborting...")
+    ELSE ()
+        MESSAGE(STATUS "Found ${GENHTML_PATH}")
+    ENDIF () # NOT GENHTML_PATH
 
-	if (NOT COVERALLS_PATH)
-		MESSAGE(STATUS "Coveralls supported disabled")
-	else()
-		MESSAGE(STATUS "Coveralls support enabled")
-	endif()
+    if (NOT COVERALLS_PATH)
+        MESSAGE(STATUS "Coveralls supported disabled")
+    else ()
+        MESSAGE(STATUS "Coveralls support enabled")
+    endif ()
 
-  ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_clean
-    # Cleanup lcov
-    COMMENT "Cleaning coverage info"
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory ${COVERAGE_BINARY_DIR} --zerocounters
-  )
+    ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_clean
+            # Cleanup lcov
+            COMMENT "Cleaning coverage info"
+            COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} --directory ${COVERAGE_BINARY_DIR} --zerocounters
+            )
 
-  ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate
-  	COMMENT "Executing tests for coverage"
-    COMMAND ${CMAKE_CTEST_COMMAND} --verbose ${ARGN}
-  )
+    ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate
+            COMMENT "Executing tests for coverage"
+            COMMAND ${CMAKE_CTEST_COMMAND} --verbose ${ARGN}
+            )
 
-  ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate_clean
-	DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_clean
-	COMMENT "Executing tests for coverage"
-	COMMAND ${CMAKE_CTEST_COMMAND} --verbose ${ARGN}
-  )
+    ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate_clean
+            DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_clean
+            COMMENT "Executing tests for coverage"
+            COMMAND ${CMAKE_CTEST_COMMAND} --verbose ${ARGN}
+            )
 
-  ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_info
-	DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate_clean
-	COMMENT "Gathering coverage info"
-    # Capturing lcov counters and generating report
-    COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -q --directory ${COVERAGE_BINARY_DIR} --base-directory ${COVERAGE_BASE_DIR} --no-external --capture --output-file ${COVERAGE_INFO_FILE}
-  )
+    ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_info
+            DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_generate_clean
+            COMMENT "Gathering coverage info"
+            # Capturing lcov counters and generating report
+            COMMAND ${LCOV_PATH} --gcov-tool ${GCOV_PATH} -q --directory ${COVERAGE_BINARY_DIR} --base-directory ${COVERAGE_BASE_DIR} --no-external --capture --output-file ${COVERAGE_INFO_FILE}
+            )
 
-	if (COVERALLS_PATH)
-		ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_coveralls
-			DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_info
-			COMMAND ${COVERALLS_PATH} ${COVERAGE_INFO_FILE}
-			WORKING_DIRECTORY ${COVERAGE_SOURCE_DIR}
-			COMMENT "Processing code coverage counters and uploading report."
-		)
-	endif()
+    if (COVERALLS_PATH)
+        ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}_coveralls
+                DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_info
+                COMMAND ${COVERALLS_PATH} ${COVERAGE_INFO_FILE}
+                WORKING_DIRECTORY ${COVERAGE_SOURCE_DIR}
+                COMMENT "Processing code coverage counters and uploading report."
+                )
+    endif ()
 
-	# Setup target
-	ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}
+    # Setup target
+    ADD_CUSTOM_TARGET(${SETUP_TARGET_FOR_COVERAGE_TARGET}
 
-		DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_info
+            DEPENDS ${SETUP_TARGET_FOR_COVERAGE_TARGET}_info
 
-		COMMAND ${CMAKE_COMMAND} -E remove_directory ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}
-		COMMAND ${GENHTML_PATH} -o ${SETUP_TARGET_FOR_COVERAGE_OUTPUT} ${COVERAGE_INFO_FILE}
-		COMMAND ${CMAKE_COMMAND} -E remove ${COVERAGE_INFO_FILE}
+            COMMAND ${CMAKE_COMMAND} -E remove_directory ${SETUP_TARGET_FOR_COVERAGE_OUTPUT}
+            COMMAND ${GENHTML_PATH} -o ${SETUP_TARGET_FOR_COVERAGE_OUTPUT} ${COVERAGE_INFO_FILE}
+            COMMAND ${CMAKE_COMMAND} -E remove ${COVERAGE_INFO_FILE}
 
-		WORKING_DIRECTORY ${COVERAGE_SOURCE_DIR}
-		COMMENT "Processing code coverage counters and generating report."
-		)
+            WORKING_DIRECTORY ${COVERAGE_SOURCE_DIR}
+            COMMENT "Processing code coverage counters and generating report."
+            )
 
-	# Show info where to find the report
-	ADD_CUSTOM_COMMAND(TARGET ${SETUP_TARGET_FOR_COVERAGE_TARGET} POST_BUILD
-		COMMAND ;
-		COMMENT "Open ./${SETUP_TARGET_FOR_COVERAGE_OUTPUT}/index.html in your browser to view the coverage report."
-		)
+    # Show info where to find the report
+    ADD_CUSTOM_COMMAND(TARGET ${SETUP_TARGET_FOR_COVERAGE_TARGET} POST_BUILD
+            COMMAND ;
+            COMMENT "Open ./${SETUP_TARGET_FOR_COVERAGE_OUTPUT}/index.html in your browser to view the coverage report."
+            )
 
 ENDFUNCTION() # SETUP_TARGET_FOR_COVERAGE
