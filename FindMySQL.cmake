@@ -8,7 +8,6 @@
 find_program(MYSQL_CONFIG mysql_config)
 
 if (NOT MYSQL_CONFIG)
-<<<<<<< Updated upstream
   message(STATUS "Could not find mysql_config program for MySql package")
   return()
 endif()
@@ -37,31 +36,24 @@ else()
     message(FATAL_ERROR "unable to find mysql lib dir")
   endif()
 endif()
-||||||| merged common ancestors
-  message(FATAL_ERROR "Could not find mysql_config program for MySql package")
-endif()
-=======
-    message(FATAL_ERROR "Could not find mysql_config program for MySql package")
-endif ()
->>>>>>> Stashed changes
 
 
 find_library(LIBMYSQLCLIENT_FOUND mysqlclient HINTS ${MYSQL_LIB_DIR})
 
-if (NOT LIBMYSQLCLIENT_FOUND)
-    message(FATAL_ERROR "libmysql not found")
-endif ()
+if (NOT LIBMYSQLCLIENT_FOUND) 
+  message(FATAL_ERROR "libmysql not found")
+endif()
 
 set(MYSQL_LIBRARIES "-lmysqlclient")
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(MYSQL
-        FOUND_VAR MYSQL_FOUND
-        REQUIRED_VARS MYSQL_LIBRARIES MYSQL_INCLUDE_DIR
-        )
+  FOUND_VAR MYSQL_FOUND
+  REQUIRED_VARS MYSQL_LIBRARIES MYSQL_INCLUDE_DIR
+)
 
 mark_as_advanced(
-        MYSQL_LIBRARIES
-        MYSQL_INCLUDE_DIR
+  MYSQL_LIBRARIES
+  MYSQL_INCLUDE_DIR
 )
 
