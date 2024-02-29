@@ -2,14 +2,14 @@ repo_name: ryjen/cmake
 report_id: 8849c4dc3673e558145f10347f057a69
 version: 0.1
 repo_type: Public
-timestamp: '2024-01-23T22:18:19+00:00'
+timestamp: '2024-02-29T19:36:38+00:00'
 requested_by: ryjen
 provider: github
 branch: master
 detected_tools_count: 3
 tools:
 - name: CMake
-  description: 'An open-source system that manages the build process '
+  description: An open-source system that manages the build process
   website_url: http://www.cmake.org/
   open_source: false
   hosted_saas: false
