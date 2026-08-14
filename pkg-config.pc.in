@@ -1,7 +1,7 @@
-prefix=@CMAKE_INSTALL_PREFIX@
+prefix=${pcfiledir}/../..
 exec_prefix=${prefix}
-includedir=${prefix}/include
-libdir=${prefix}/lib
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
 
 Name: @PKGCONF_NAME@
 Description: @PKGCONF_DESCRIPTION@
@@ -9,4 +9,4 @@ URL: @PKGCONF_URL@
 Version: @PKGCONF_VERSION@
 Cflags: -I${includedir}
 Libs: -L${libdir} -l@PKGCONF_NAME@
-Libs.private: 
+Libs.private:
